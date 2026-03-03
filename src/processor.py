@@ -1,4 +1,5 @@
 from confluent_kafka import Consumer
+import os
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -7,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from db_setup import Transaction, FraudAlert
 from data_quality import validate_transaction
 
-DATABASE_URL = "postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection"
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection')
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 
@@ -29,7 +30,7 @@ class FraudDetector:
         if len(recent_txs) >= 3:
             rules_triggered.append("high_velocity")
         
-        if len(self.user_transactions[user_id]) > 5:
+        if len(self.user_transactions[user_id]) > 2:
             avg_amount = sum(t['amount'] for t in self.user_transactions[user_id]) / len(self.user_transactions[user_id])
             if amount > avg_amount * 3:
                 rules_triggered.append("unusual_amount")
@@ -74,10 +75,14 @@ def write_to_db(session, tx, result):
     session.commit()
 
 def consume_and_process():
+    # Initialize DB tables if they don't exist
+    from db_setup import init_db
+    init_db()  
+    
     consumer = Consumer({
-        'bootstrap.servers': 'localhost:9092',
-        'group.id': 'fraud-detector',
-        'auto.offset.reset': 'earliest'
+    'bootstrap.servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092'),
+    'group.id': 'fraud-detector',
+    'auto.offset.reset': 'earliest'
     })
     
     consumer.subscribe(['payment-transactions'])

@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, Column, String, Numeric, TIMESTAMP, ARRAY, Integer
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+import os
 
-DATABASE_URL = "postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection"
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection')
 
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()

@@ -2,25 +2,34 @@ version: '3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
+    networks:
+      - fraud-net
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      
+
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
+    networks:
+      - fraud-net
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   postgres:
     image: postgres:15
     ports:
       - "5433:5432"
+    networks:
+      - fraud-net
     environment:
       POSTGRES_USER: fraud_user
       POSTGRES_PASSWORD: fraud_pass
@@ -28,5 +37,46 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  generator:
+    build: .
+    command: python src/generator.py
+    depends_on:
+      - kafka
+    restart: on-failure
+    networks:
+      - fraud-net
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+  processor:
+    build: .
+    command: python src/processor.py
+    depends_on:
+      - kafka
+      - postgres
+    restart: on-failure
+    networks:
+      - fraud-net
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DATABASE_URL: postgresql://fraud_user:fraud_pass@postgres:5432/fraud_detection
+
+  dashboard:
+    build: .
+    command: python -m streamlit run src/dashboard.py --server.port 8501
+    depends_on:
+      - postgres
+    ports:
+      - "8501:8501"
+    restart: on-failure
+    networks:
+      - fraud-net
+    environment:
+      DATABASE_URL: postgresql://fraud_user:fraud_pass@postgres:5432/fraud_detection
+
 volumes:
   postgres_data:
+
+networks:
+  fraud-net:
+    driver: bridge

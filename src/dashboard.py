@@ -1,8 +1,12 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
+import os
+import time
 
-DATABASE_URL = "postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection"
+st.set_page_config(page_title="Fraud Detection", layout="wide")
+
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection')
 engine = create_engine(DATABASE_URL)
 
 st.title("Fraud Detection Dashboard")
@@ -37,3 +41,7 @@ fraud_over_time = pd.read_sql("""
     ORDER BY minute
 """, engine)
 st.line_chart(fraud_over_time.set_index('minute'))
+
+# Auto-refresh every 10 seconds
+time.sleep(10)
+st.rerun()
