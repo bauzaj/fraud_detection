@@ -72,12 +72,14 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
         fraud_type = None
 
         if is_fraud:
-            fraud_type = random.choice(['high_amount', 'velocity', 'unusual_amount'])
+            fraud_type = random.choices(
+                ['high_amount', 'velocity', 'unusual_amount'],
+                weights=[0.45, 0.15, 0.40])[0]
 
         if fraud_type == 'velocity':
             # Burst 4 transactions from same user in quick succession
             user_id = f"user_{random.randint(1000, 9999)}"
-            for _ in range(4):
+            for _ in range(2):
                 tx = generate_transaction(user_id=user_id, is_fraud=True)
                 tx['amount'] = round(random.uniform(50, 300), 2)
                 publish(producer, tx)
@@ -96,7 +98,7 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
         else:
             # Normal transaction — mix of general pool and small pool
             # 20% chance to use small pool so their history stays fresh
-            if random.random() < 0.20:
+            if random.random() < 0.05:
                 user_id = random.choice(SMALL_POOL)
                 tx = generate_transaction(user_id=user_id, is_fraud=False)
                 tx['amount'] = round(random.uniform(30, 150), 2)

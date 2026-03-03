@@ -27,7 +27,7 @@ class FraudDetector:
         
         recent_txs = [t for t in self.user_transactions[user_id] 
                       if timestamp - t['timestamp'] < timedelta(minutes=5)]
-        if len(recent_txs) >= 3:
+        if len(recent_txs) >= 5:
             rules_triggered.append("high_velocity")
         
         if len(self.user_transactions[user_id]) > 2:
