@@ -44,11 +44,11 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
         'bootstrap.servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
     })
 
-    # Small pool of users whose history we'll build up for unusual_amount detection
-    SMALL_POOL = [f"user_{i}" for i in range(1000, 1101)]
-    # Track how many normal txs each small-pool user has sent
-    small_pool_history = {u: 0 for u in SMALL_POOL}
-    # Track running average amount per small-pool user
+    # Fully isolated user pools — each pool is used by exactly one traffic type
+    SMALL_POOL    = [f"user_{i}" for i in range(1000, 1101)]   # unusual_amount fraud + seeding only
+    VELOCITY_POOL = [f"user_{i}" for i in range(2000, 3000)]   # velocity fraud bursts only
+    GENERAL_POOL  = [f"user_{i}" for i in range(5000, 10000)]  # normal transactions + high_amount fraud only
+    # Track running average amount per small-pool user (for unusual_amount spike calculation)
     user_avg_amounts = {u: round(random.uniform(50, 200), 2) for u in SMALL_POOL}
 
     count = 0
@@ -62,7 +62,6 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
             tx['amount'] = round(random.uniform(30, 150), 2)
             publish(producer, tx)
             user_avg_amounts[user_id] = (user_avg_amounts[user_id] * 0.9) + (tx['amount'] * 0.1)
-            small_pool_history[user_id] += 1
             count += 1
     producer.flush()
     print(f"Seeded {count} transactions. Starting main stream...")
@@ -78,7 +77,7 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
 
         if fraud_type == 'velocity':
             # Burst 10 transactions from same user in quick succession
-            user_id = f"user_{random.randint(2000, 9999)}"
+            user_id = random.choice(VELOCITY_POOL)
             for _ in range(10):
                 tx = generate_transaction(user_id=user_id, is_fraud=True)
                 tx['amount'] = round(random.uniform(50, 300), 2)
@@ -96,19 +95,11 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
             count += 1
 
         else:
-            # Normal transaction — mix of general pool and small pool
-            # 20% chance to use small pool so their history stays fresh
-            if random.random() < 0.20:
-                user_id = random.choice(SMALL_POOL)
-                tx = generate_transaction(user_id=user_id, is_fraud=False)
-                tx['amount'] = round(random.uniform(30, 150), 2)
-                user_avg_amounts[user_id] = (user_avg_amounts[user_id] * 0.9) + (tx['amount'] * 0.1)
-                small_pool_history[user_id] += 1
-            else:
-                tx = generate_transaction(is_fraud=is_fraud)
-                if is_fraud:  # high_amount
-                    tx['amount'] = round(random.uniform(1100, 2500), 2)
-
+            # Normal transaction or high_amount fraud — always use GENERAL_POOL
+            user_id = random.choice(GENERAL_POOL)
+            tx = generate_transaction(user_id=user_id, is_fraud=is_fraud)
+            if is_fraud:  # high_amount
+                tx['amount'] = round(random.uniform(1100, 2500), 2)
             publish(producer, tx)
             count += 1
 

@@ -20,7 +20,17 @@ Real-time payment fraud detection pipeline. GitHub: https://github.com/bauzaj/fr
 ## Fraud Rules (processor.py)
 - `high_amount`: amount > 1000
 - `high_velocity`: >= 8 transactions in 5 minutes
-- `unusual_amount`: amount > 2.5x user average (requires 2+ history)
+- `unusual_amount`: amount > 3x user average (requires 2+ history)
+
+## Generator Fraud Patterns (generator.py)
+- `high_amount` (45%): single tx, $1,100–$2,500, any user
+- `velocity` (15%): 10-tx burst at 50ms intervals, users 2000–9999 (separate from small pool)
+- `unusual_amount` (40%): spike 3.1–4.5x user average, small pool users 1000–1100
+
+## User Pools (fully isolated — no cross-contamination)
+- `SMALL_POOL` `user_1000`–`user_1100` — seeded with 3 txs each; used **only** for `unusual_amount` fraud
+- `VELOCITY_POOL` `user_2000`–`user_2999` — used **only** for velocity fraud bursts
+- `GENERAL_POOL` `user_5000`–`user_9999` — used **only** for normal transactions and `high_amount` fraud
 
 ## Common Commands
 - Start: `docker-compose up -d`
@@ -28,6 +38,3 @@ Real-time payment fraud detection pipeline. GitHub: https://github.com/bauzaj/fr
 - Rebuild: `docker-compose build --no-cache <service>`
 - Logs: `docker-compose logs <service> --tail=30`
 - Query DB: `docker exec fraud_detection-postgres-1 psql -U fraud_user -d fraud_detection -c "<query>"`
-
-## Current Issues Being Worked On
-- Balancing fraud rule distribution (high_velocity currently over-represented)
