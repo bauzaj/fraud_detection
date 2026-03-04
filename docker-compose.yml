@@ -36,6 +36,7 @@ services:
       POSTGRES_DB: fraud_detection
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: postgres -c max_connections=200
 
   generator:
     build: .
