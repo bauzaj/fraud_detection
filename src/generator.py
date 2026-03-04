@@ -57,7 +57,7 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
     # has enough history to evaluate the unusual_amount rule from the start
     print("Seeding user history for unusual_amount detection...")
     for user_id in SMALL_POOL:
-        for _ in range(5):
+        for _ in range(3):
             tx = generate_transaction(user_id=user_id, is_fraud=False)
             tx['amount'] = round(random.uniform(30, 150), 2)
             publish(producer, tx)
@@ -77,9 +77,9 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
                 weights=[0.45, 0.15, 0.40])[0]
 
         if fraud_type == 'velocity':
-            # Burst 4 transactions from same user in quick succession
-            user_id = f"user_{random.randint(1000, 9999)}"
-            for _ in range(2):
+            # Burst 10 transactions from same user in quick succession
+            user_id = f"user_{random.randint(2000, 9999)}"
+            for _ in range(10):
                 tx = generate_transaction(user_id=user_id, is_fraud=True)
                 tx['amount'] = round(random.uniform(50, 300), 2)
                 publish(producer, tx)
@@ -91,14 +91,14 @@ def generate_stream(rate_per_sec=10, fraud_rate=0.03):
             user_id = random.choice(SMALL_POOL)
             avg = user_avg_amounts[user_id]
             tx = generate_transaction(user_id=user_id, is_fraud=True)
-            tx['amount'] = round(avg * random.uniform(2.5, 4.0), 2)
+            tx['amount'] = round(avg * random.uniform(3.1, 4.5), 2)
             publish(producer, tx)
             count += 1
 
         else:
             # Normal transaction — mix of general pool and small pool
             # 20% chance to use small pool so their history stays fresh
-            if random.random() < 0.05:
+            if random.random() < 0.20:
                 user_id = random.choice(SMALL_POOL)
                 tx = generate_transaction(user_id=user_id, is_fraud=False)
                 tx['amount'] = round(random.uniform(30, 150), 2)
