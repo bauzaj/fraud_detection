@@ -55,7 +55,10 @@ Plans:
   2. The script prints a class distribution confirming both fraud and non-fraud labels are present (assertion `nunique() == 2` passes)
   3. `src/model/fraud_model.joblib` exists on the filesystem after the script completes
   4. Printed evaluation shows fraud-class recall >= 0.80 on the held-out validation split
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md -- Write train_model.py: feature engineering, balanced RandomForest Pipeline, PR-AUC/recall evaluation, joblib serialization
 
 ### Phase 8: Processor Integration
 **Goal**: The processor loads the trained model once at startup and writes a real `ml_score` float (0.0–1.0) to the `transactions` table for every Kafka message processed, while keeping all existing rule-based detection active.
@@ -86,6 +89,6 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 1-5. Streaming Pipeline | v1.0 | - | Complete | pre-GSD |
 | 6. Schema and Dependencies | 1/1 | Complete   | 2026-03-09 | - |
-| 7. Training Pipeline | v2.0 | 0/TBD | Not started | - |
+| 7. Training Pipeline | v2.0 | 0/1 | Planned | - |
 | 8. Processor Integration | v2.0 | 0/TBD | Not started | - |
 | 9. Dashboard Integration | v2.0 | 0/TBD | Not started | - |
