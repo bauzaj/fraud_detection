@@ -21,6 +21,7 @@ class Transaction(Base):
     merchant_category = Column(String)
     is_fraud = Column(String)  # Ground truth
     processed_at = Column(TIMESTAMP, default=datetime.now)
+    ml_score = Column(Numeric(5, 4))  # ML fraud probability 0.0000-1.0000; NULL until Phase 8
 
 class FraudAlert(Base):
     __tablename__ = 'fraud_alerts'
