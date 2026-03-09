@@ -41,7 +41,10 @@ Phases 1-5 were completed before GSD tooling was in place. The shipped system in
   2. `docker-compose build processor` completes without package resolution errors for scikit-learn, xgboost, joblib, pandas, or numpy
   3. A file at `src/model/` directory path exists inside the processor container (visible via `docker exec ... ls /app/src/model`)
   4. `docker-compose up -d` brings all 6 services healthy after the schema migration run with `down -v`
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Add ml_score column, pin ML dependencies, create model directory, validate full stack
 
 ### Phase 7: Training Pipeline
 **Goal**: A training script runs against the PostgreSQL `transactions` table, engineers the required features, and produces a serialized model artifact at `src/model/fraud_model.joblib` ready to be baked into the processor image.
@@ -82,7 +85,7 @@ Phases 1-5 were completed before GSD tooling was in place. The shipped system in
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1-5. Streaming Pipeline | v1.0 | - | Complete | pre-GSD |
-| 6. Schema and Dependencies | v2.0 | 0/TBD | Not started | - |
+| 6. Schema and Dependencies | v2.0 | 0/1 | Not started | - |
 | 7. Training Pipeline | v2.0 | 0/TBD | Not started | - |
 | 8. Processor Integration | v2.0 | 0/TBD | Not started | - |
 | 9. Dashboard Integration | v2.0 | 0/TBD | Not started | - |
