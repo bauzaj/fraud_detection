@@ -7,9 +7,9 @@
 
 ### Infrastructure & Schema
 
-- [ ] **INFRA-01**: `ml_score NUMERIC(5,4)` column added to `transactions` table in `db_setup.py`
-- [ ] **INFRA-02**: `scikit-learn==1.6.1`, `xgboost==2.1.4`, `joblib==1.4.2`, `pandas==2.2.3`, `numpy==1.26.4` added to `requirements.txt`
-- [ ] **INFRA-03**: `src/model/` directory created for model artifact storage
+- [x] **INFRA-01**: `ml_score NUMERIC(5,4)` column added to `transactions` table in `db_setup.py`
+- [x] **INFRA-02**: `scikit-learn==1.6.1`, `xgboost==2.1.4`, `joblib==1.4.2`, `pandas==2.2.3`, `numpy==1.26.4` added to `requirements.txt`
+- [x] **INFRA-03**: `src/model/` directory created for model artifact storage
 
 ### Training Pipeline
 
@@ -58,9 +58,9 @@
 
 | Requirement | Phase | Status |
 |---|---|---|
-| INFRA-01 | Phase 6 | Pending |
-| INFRA-02 | Phase 6 | Pending |
-| INFRA-03 | Phase 6 | Pending |
+| INFRA-01 | Phase 6 | Complete |
+| INFRA-02 | Phase 6 | Complete |
+| INFRA-03 | Phase 6 | Complete |
 | TRAIN-01 | Phase 7 | Pending |
 | TRAIN-02 | Phase 7 | Pending |
 | TRAIN-03 | Phase 7 | Pending |

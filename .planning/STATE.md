@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v2.0
+milestone_name: ML Fraud Scoring
+status: planning
+stopped_at: Completed 06-01-PLAN.md (schema and dependencies)
+last_updated: "2026-03-09T17:00:30.197Z"
+last_activity: 2026-03-06 — Roadmap created for v2.0 ML Fraud Scoring (Phases 6-9)
+progress:
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 100
+---
+
 # Project State
 
 ## Project Reference
@@ -14,7 +30,7 @@ Plan: Not started
 Status: Ready to plan
 Last activity: 2026-03-06 — Roadmap created for v2.0 ML Fraud Scoring (Phases 6-9)
 
-Progress: [██░░░░░░░░] 20% (v1.0 complete; v2.0 not started)
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -33,6 +49,7 @@ Progress: [██░░░░░░░░] 20% (v1.0 complete; v2.0 not started)
 - No v2.0 plans completed yet
 
 *Updated after each plan completion*
+| Phase 06-schema-and-dependencies P01 | 6 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -46,6 +63,8 @@ Recent decisions affecting current work:
 - [v2.0 planning]: `is_fraud` String-to-int casting uses `.map({'True': 1, 'False': 0})` — schema type NOT fixed this milestone
 - [v2.0 planning]: pandas imported only in train_model.py — must NOT be imported in processor.py hot path
 - [v2.0 planning]: Training runs against host port 5433; inference runs in-container against internal port 5432
+- [Phase 06-schema-and-dependencies]: ml_score column is nullable so processor rows written before Phase 8 ML inference do not fail with NOT NULL violations
+- [Phase 06-schema-and-dependencies]: numpy==1.26.4 pinned to last 1.x LTS; numpy 2.x has C-API friction on python:3.11-slim
 
 ### Pending Todos
 
@@ -59,6 +78,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Roadmap written, ready to plan Phase 6
+Last session: 2026-03-09T17:00:30.170Z
+Stopped at: Completed 06-01-PLAN.md (schema and dependencies)
 Resume file: None

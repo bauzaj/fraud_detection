@@ -85,7 +85,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1-5. Streaming Pipeline | v1.0 | - | Complete | pre-GSD |
-| 6. Schema and Dependencies | v2.0 | 0/1 | Not started | - |
+| 6. Schema and Dependencies | 1/1 | Complete   | 2026-03-09 | - |
 | 7. Training Pipeline | v2.0 | 0/TBD | Not started | - |
 | 8. Processor Integration | v2.0 | 0/TBD | Not started | - |
 | 9. Dashboard Integration | v2.0 | 0/TBD | Not started | - |
