@@ -20,7 +20,7 @@ Payment Generator → Kafka → Stream Processor → PostgreSQL
 - **Real-time ingestion** via Apache Kafka at 10+ transactions/second
 - **Multi-rule fraud detection:**
   - High amount threshold (>$1,000)
-  - Velocity check (>3 transactions in 5 minutes)
+  - Velocity check (>=8 transactions in 5 minutes)
   - Unusual amount (3x user's historical average)
 - **Data quality validation** on every event before processing
 - **PostgreSQL storage** for transactions and fraud alerts
@@ -49,11 +49,13 @@ fraud_detection/
 ├── docker-compose.yml        # Kafka + PostgreSQL containers
 ├── requirements.txt
 └── src/
-    ├── payment_generator.py  # Synthetic transaction producer
-    ├── fraud_processor.py    # Kafka consumer + fraud detection
+    ├── generator.py          # Synthetic transaction producer
+    ├── processor.py          # Kafka consumer + fraud detection
+    ├── train_model.py        # ML model training script
     ├── data_quality.py       # Transaction validation
     ├── db_setup.py           # Schema initialization
-    └── dashboard.py          # Streamlit dashboard
+    ├── dashboard.py          # Streamlit dashboard
+    └── model/                # Trained model artifact (fraud_model.joblib)
 ```
 
 ---
@@ -62,7 +64,7 @@ fraud_detection/
 
 ### Prerequisites
 - Docker Desktop
-- Python 3.10+
+- Python 3.11+
 
 ### 1. Start infrastructure
 
@@ -82,17 +84,7 @@ pip install -r requirements.txt
 python src/db_setup.py
 ```
 
-### 4. Run the pipeline (two terminals)
-
-```bash
-# Terminal 1 - Start transaction generator
-python src/payment_generator.py
-
-# Terminal 2 - Start fraud processor
-python src/fraud_processor.py
-```
-
-### 5. Launch the dashboard
+### 4. Launch the dashboard
 
 ```bash
 python -m streamlit run src/dashboard.py
@@ -121,6 +113,7 @@ FRAUD DETECTED: tx_dbbc5089 | Rules: ['unusual_amount']
 | user_id | VARCHAR | Customer identifier |
 | amount | DECIMAL | Transaction amount |
 | merchant_category | VARCHAR | Retail, dining, travel, etc. |
+| ml_score | DECIMAL | ML fraud probability (0.0–1.0) |
 
 **fraud_alerts**
 | Column | Type | Description |

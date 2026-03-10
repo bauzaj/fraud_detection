@@ -102,7 +102,11 @@ def consume_and_process():
                 print(f"Consumer error: {msg.error()}")
                 continue
             
-            tx = json.loads(msg.value().decode('utf-8'))
+            try:
+                tx = json.loads(msg.value().decode('utf-8'))
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                print(f"Failed to decode message: {e}")
+                continue
 
             is_valid, errors = validate_transaction(tx)
             if not is_valid:
@@ -111,7 +115,11 @@ def consume_and_process():
                 continue
 
             result = detector.detect_fraud(tx)
-            write_to_db(session, tx, result)
+            try:
+                write_to_db(session, tx, result)
+            except Exception as e:
+                print(f"DB write failed for {tx.get('transaction_id', 'unknown')}: {e}")
+                session.rollback()
             
             processed += 1
             if result['is_fraud']:

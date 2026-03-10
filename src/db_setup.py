@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, Numeric, TIMESTAMP, ARRAY, Integer
+from sqlalchemy import create_engine, Column, String, Numeric, TIMESTAMP, ARRAY, Integer, ForeignKey, Index
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -13,8 +13,8 @@ class Transaction(Base):
     __tablename__ = 'transactions'
     
     transaction_id = Column(String, primary_key=True)
-    timestamp = Column(TIMESTAMP)
-    user_id = Column(String)
+    timestamp = Column(TIMESTAMP, index=True)
+    user_id = Column(String, index=True)
     merchant_id = Column(String)
     amount = Column(Numeric(10, 2))
     card_last_4 = Column(String)
@@ -27,10 +27,10 @@ class FraudAlert(Base):
     __tablename__ = 'fraud_alerts'
     
     alert_id = Column(Integer, primary_key=True, autoincrement=True)
-    transaction_id = Column(String)
+    transaction_id = Column(String, ForeignKey('transactions.transaction_id'))
     fraud_score = Column(Numeric(3, 2))
     rules_triggered = Column(ARRAY(String))
-    detected_at = Column(TIMESTAMP)
+    detected_at = Column(TIMESTAMP, index=True)
 
 def init_db():
     Base.metadata.create_all(engine)
