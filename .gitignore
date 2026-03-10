@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 .env
 venv/
+*.txt
+*.log
+.planning/codebase/CONCERNS.md
+.planning/research/PITFALLS.md
+.planning/STATE.md
