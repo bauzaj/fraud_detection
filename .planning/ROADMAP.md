@@ -69,7 +69,10 @@ Plans:
   2. `SELECT ml_score FROM transactions WHERE ml_score IS NOT NULL LIMIT 10` returns rows with float values between 0 and 1 (not NULL for every row)
   3. `SELECT COUNT(*) FROM transactions WHERE ml_score IS NULL` approaches 0 after the processor runs for 60+ seconds
   4. Transactions flagged by existing rules (`high_amount`, `high_velocity`, `unusual_amount`) still appear in `fraud_alerts` table — rule-based detection continues to fire alongside ML scoring
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — Wire fraud_model.joblib into FraudDetector: model load at __init__, ML scoring in detect_fraud (pre-append), ml_score written to transactions table
 
 ### Phase 9: Dashboard Integration
 **Goal**: The Streamlit dashboard displays each transaction's ML fraud score as a percentage (0–100%), replacing the previous rule-count-based fraud rate column, so the ML output is visible to a viewer without database access.
@@ -90,5 +93,5 @@ Plans:
 | 1-5. Streaming Pipeline | v1.0 | - | Complete | pre-GSD |
 | 6. Schema and Dependencies | 1/1 | Complete   | 2026-03-09 | - |
 | 7. Training Pipeline | 1/1 | Complete   | 2026-03-10 | - |
-| 8. Processor Integration | v2.0 | 0/TBD | Not started | - |
+| 8. Processor Integration | v2.0 | 0/1 | Not started | - |
 | 9. Dashboard Integration | v2.0 | 0/TBD | Not started | - |
