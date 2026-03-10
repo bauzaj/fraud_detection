@@ -13,10 +13,10 @@
 
 ### Training Pipeline
 
-- [ ] **TRAIN-01**: `src/train_model.py` script reads transactions from PostgreSQL and engineers features: `amount`, `tx_count_last_5min`, `amount_vs_user_avg_ratio`, `hour_of_day`, `day_of_week`, `merchant_category`
-- [ ] **TRAIN-02**: Training script correctly casts `is_fraud` String column to int labels using `.map({'True': 1, 'False': 0})` with assertion that both classes are present
-- [ ] **TRAIN-03**: Model trained with `class_weight='balanced'`; evaluated with PR-AUC and fraud-class recall (not accuracy)
-- [ ] **TRAIN-04**: Trained model serialized to `src/model/fraud_model.joblib`
+- [x] **TRAIN-01**: `src/train_model.py` script reads transactions from PostgreSQL and engineers features: `amount`, `tx_count_last_5min`, `amount_vs_user_avg_ratio`, `hour_of_day`, `day_of_week`, `merchant_category`
+- [x] **TRAIN-02**: Training script correctly casts `is_fraud` String column to int labels using `.map({'True': 1, 'False': 0})` with assertion that both classes are present
+- [x] **TRAIN-03**: Model trained with `class_weight='balanced'`; evaluated with PR-AUC and fraud-class recall (not accuracy)
+- [x] **TRAIN-04**: Trained model serialized to `src/model/fraud_model.joblib`
 
 ### Processor Integration
 
@@ -61,10 +61,10 @@
 | INFRA-01 | Phase 6 | Complete |
 | INFRA-02 | Phase 6 | Complete |
 | INFRA-03 | Phase 6 | Complete |
-| TRAIN-01 | Phase 7 | Pending |
-| TRAIN-02 | Phase 7 | Pending |
-| TRAIN-03 | Phase 7 | Pending |
-| TRAIN-04 | Phase 7 | Pending |
+| TRAIN-01 | Phase 7 | Complete |
+| TRAIN-02 | Phase 7 | Complete |
+| TRAIN-03 | Phase 7 | Complete |
+| TRAIN-04 | Phase 7 | Complete |
 | PROC-01 | Phase 8 | Pending |
 | PROC-02 | Phase 8 | Pending |
 | PROC-03 | Phase 8 | Pending |

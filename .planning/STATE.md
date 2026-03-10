@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: ML Fraud Scoring
 status: planning
-stopped_at: Completed 06-01-PLAN.md (schema and dependencies)
-last_updated: "2026-03-09T17:04:46.904Z"
+stopped_at: Completed 07-01-PLAN.md (training pipeline)
+last_updated: "2026-03-10T14:32:55.410Z"
 last_activity: 2026-03-06 — Roadmap created for v2.0 ML Fraud Scoring (Phases 6-9)
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  completed_phases: 2
+  total_plans: 2
+  completed_plans: 2
   percent: 100
 ---
 
@@ -50,6 +50,7 @@ Progress: [██████████] 100%
 
 *Updated after each plan completion*
 | Phase 06-schema-and-dependencies P01 | 6 | 3 tasks | 3 files |
+| Phase 07-training-pipeline P01 | 23 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [v2.0 planning]: Training runs against host port 5433; inference runs in-container against internal port 5432
 - [Phase 06-schema-and-dependencies]: ml_score column is nullable so processor rows written before Phase 8 ML inference do not fail with NOT NULL violations
 - [Phase 06-schema-and-dependencies]: numpy==1.26.4 pinned to last 1.x LTS; numpy 2.x has C-API friction on python:3.11-slim
+- [Phase 07-training-pipeline]: Recall achieved via threshold optimization (0.13) not hyperparameter tuning — RF default 0.5 threshold gives 0.71 recall; PR-AUC=0.82 confirms model discriminates well
+- [Phase 07-training-pipeline]: precision_recall_curve used to find decision threshold=0.13 achieving recall=0.8001 — Phase 8 uses predict_proba scores so threshold does not affect inference
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-09T17:00:30.170Z
-Stopped at: Completed 06-01-PLAN.md (schema and dependencies)
+Last session: 2026-03-10T14:32:55.406Z
+Stopped at: Completed 07-01-PLAN.md (training pipeline)
 Resume file: None
