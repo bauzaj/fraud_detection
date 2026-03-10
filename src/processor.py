@@ -7,15 +7,22 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Transaction, FraudAlert
 from data_quality import validate_transaction
+import joblib
+import pandas as pd
+import numpy as np
 
 DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://fraud_user:fraud_pass@127.0.0.1:5433/fraud_detection')
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 
 class FraudDetector:
+    MODEL_PATH = 'src/model/fraud_model.joblib'
+
     def __init__(self):
         self.user_transactions = defaultdict(list)
-        
+        self.model = joblib.load(self.MODEL_PATH)
+        print(f"Model loaded from {self.MODEL_PATH}")
+
     def detect_fraud(self, tx):
         rules_triggered = []
         user_id = tx['user_id']
@@ -35,16 +42,39 @@ class FraudDetector:
             if amount > avg_amount * 3:
                 rules_triggered.append("unusual_amount")
         
+        # --- ML scoring (pre-append state — history does NOT include current tx) ---
+        # recent_txs already computed above; reuse for tx_count_last_5min window parity
+        history = self.user_transactions[user_id]
+        tx_count_last_5min = float(len(recent_txs))
+        if history:
+            avg_amount_history = sum(t['amount'] for t in history) / len(history)
+            amount_vs_user_avg_ratio = float(amount) / avg_amount_history
+        else:
+            amount_vs_user_avg_ratio = 1.0  # cold-start: no prior history; matches training fillna(1.0)
+        row = {
+            'amount': float(amount),
+            'tx_count_last_5min': tx_count_last_5min,
+            'amount_vs_user_avg_ratio': amount_vs_user_avg_ratio,
+            'hour_of_day': float(timestamp.hour),
+            'day_of_week': float(timestamp.weekday()),
+            'merchant_category': tx['merchant_category'],
+        }
+        X = pd.DataFrame([row])
+        raw_score = float(self.model.predict_proba(X)[0][1])
+        ml_score = min(1.0, max(0.0, raw_score))  # clamp for NUMERIC(5,4) safety
+        # -------------------------------------------------------------------------
+
         self.user_transactions[user_id].append({'amount': amount, 'timestamp': timestamp})
         if len(self.user_transactions[user_id]) > 100:
             self.user_transactions[user_id] = self.user_transactions[user_id][-100:]
-        
+
         return {
             "transaction_id": tx['transaction_id'],
             "is_fraud": len(rules_triggered) > 0,
             "fraud_score": len(rules_triggered) / 3.0,
             "rules_triggered": rules_triggered,
             "detected_at": datetime.now().isoformat(),
+            "ml_score": ml_score,
             "raw": tx
         }
 
@@ -58,7 +88,8 @@ def write_to_db(session, tx, result):
         amount=tx['amount'],
         card_last_4=tx['card_last_4'],
         merchant_category=tx['merchant_category'],
-        is_fraud=str(tx.get('is_fraud', False))
+        is_fraud=str(tx.get('is_fraud', False)),
+        ml_score=result['ml_score'],
     )
     session.merge(transaction)
 
