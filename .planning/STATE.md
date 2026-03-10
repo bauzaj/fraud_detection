@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: ML Fraud Scoring
 status: planning
-stopped_at: Completed 07-01-PLAN.md (training pipeline)
-last_updated: "2026-03-10T14:36:44.268Z"
+stopped_at: Checkpoint at 08-01 Task 2 (human-verify docker rebuild)
+last_updated: "2026-03-10T18:50:30.932Z"
 last_activity: 2026-03-06 — Roadmap created for v2.0 ML Fraud Scoring (Phases 6-9)
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 3
+  total_plans: 3
+  completed_plans: 3
   percent: 100
 ---
 
@@ -68,6 +68,9 @@ Recent decisions affecting current work:
 - [Phase 06-schema-and-dependencies]: numpy==1.26.4 pinned to last 1.x LTS; numpy 2.x has C-API friction on python:3.11-slim
 - [Phase 07-training-pipeline]: Recall achieved via threshold optimization (0.13) not hyperparameter tuning — RF default 0.5 threshold gives 0.71 recall; PR-AUC=0.82 confirms model discriminates well
 - [Phase 07-training-pipeline]: precision_recall_curve used to find decision threshold=0.13 achieving recall=0.8001 — Phase 8 uses predict_proba scores so threshold does not affect inference
+- [Phase 08-processor-integration]: joblib/pandas/numpy imported at module level (not inside while loop hot path) in processor.py
+- [Phase 08-processor-integration]: ML scoring block placed before user_transactions.append to preserve pre-append state matching training-time shift(1)/closed=left semantics
+- [Phase 08-processor-integration]: cold-start amount_vs_user_avg_ratio defaults to 1.0 matching training fillna(1.0)
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-10T14:32:55.406Z
-Stopped at: Completed 07-01-PLAN.md (training pipeline)
+Last session: 2026-03-10T18:50:23.150Z
+Stopped at: Checkpoint at 08-01 Task 2 (human-verify docker rebuild)
 Resume file: None

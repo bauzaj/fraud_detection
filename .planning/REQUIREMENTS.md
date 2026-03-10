@@ -20,10 +20,10 @@
 
 ### Processor Integration
 
-- [ ] **PROC-01**: `FraudDetector` loads model artifact once at `__init__` time (not inside the Kafka consumer loop)
-- [ ] **PROC-02**: ML fraud probability (0.0–1.0) computed per transaction using same feature windows as training script
-- [ ] **PROC-03**: `ml_score` written to `transactions` table for every processed transaction (not just fraud alerts)
-- [ ] **PROC-04**: Existing rule-based detection (`high_amount`, `high_velocity`, `unusual_amount`) kept as safety-net alongside ML score
+- [x] **PROC-01**: `FraudDetector` loads model artifact once at `__init__` time (not inside the Kafka consumer loop)
+- [x] **PROC-02**: ML fraud probability (0.0–1.0) computed per transaction using same feature windows as training script
+- [x] **PROC-03**: `ml_score` written to `transactions` table for every processed transaction (not just fraud alerts)
+- [x] **PROC-04**: Existing rule-based detection (`high_amount`, `high_velocity`, `unusual_amount`) kept as safety-net alongside ML score
 
 ### Dashboard
 
@@ -65,10 +65,10 @@
 | TRAIN-02 | Phase 7 | Complete |
 | TRAIN-03 | Phase 7 | Complete |
 | TRAIN-04 | Phase 7 | Complete |
-| PROC-01 | Phase 8 | Pending |
-| PROC-02 | Phase 8 | Pending |
-| PROC-03 | Phase 8 | Pending |
-| PROC-04 | Phase 8 | Pending |
+| PROC-01 | Phase 8 | Complete |
+| PROC-02 | Phase 8 | Complete |
+| PROC-03 | Phase 8 | Complete |
+| PROC-04 | Phase 8 | Complete |
 | DASH-01 | Phase 9 | Pending |
 
 **Coverage:**
